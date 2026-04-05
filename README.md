@@ -1,73 +1,120 @@
-# 🌐 MCP Orchestrator
+# 🌐 MCP Agent Orchestrator
 
-A professional orchestration suite for the **Model Context Protocol (MCP)**, featuring modular HTTP client/server implementations, advanced sampling workflows, and a modern Gradio-based interface.
+[![MCP Protocol](https://img.shields.io/badge/MCP-Protocol-blue?style=for-the-badge)](https://modelcontextprotocol.io)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue?style=for-the-badge&logo=python)](https://www.python.org/)
+[![FastMCP](https://img.shields.io/badge/FastMCP-Framework-green?style=for-the-badge)](https://github.com/jlowin/fastmcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-![MCP Banner](https://img.shields.io/badge/MCP-Protocol-blue?style=for-the-badge)
-![Python](https://img.shields.io/badge/python-v3.10+-blue?style=for-the-badge&logo=python)
-![FastMCP](https://img.shields.io/badge/FastMCP-Framework-green?style=for-the-badge)
+A professional-grade orchestration suite for the **Model Context Protocol (MCP)**. This project demonstrates a robust remote HTTP architecture, featuring modular client/server implementations, advanced AI-driven tool discovery, and a premium developer experience.
 
-## 🚀 Overview
+---
 
-The **MCP Orchestrator** is designed to bridge the gap between Large Language Models (LLMs) and local tool execution. By leveraging the Model Context Protocol over HTTP, it allows for secure, bidirectional communication between an AI host and a set of distributed tools.
+## 🏗️ Architecture Overview
 
-### Key Components
+The system follows a classic **Distributed Tooling** pattern where the LLM (Host) and the Tools (Server) are decoupled via the Model Context Protocol over an HTTP transport layer.
 
-- **📡 HTTP MCP Server**: A robust file management and code analysis server built with `FastMCP`.
-- **🛠️ Base Client Library**: A reusable HTTP client for connecting to any MCP-compliant server.
-- **🖥️ Desktop Client**: A high-end Gradio GUI for interacting with the MCP ecosystem.
-- **🧠 AI Host Application**: An integrated LLM host (compatible with OpenAI) that utilizes MCP tools for complex reasoning tasks.
+```mermaid
+graph TD
+    subgraph "AI Host (Client Environment)"
+        A[OpenAI LLM] <--> B[MCP AI Host App]
+        B <--> C[Gradio Chat Interface]
+    end
 
-## ✨ Features
+    subgraph "MCP Server (Resource Environment)"
+        D[MCP HTTP Server] <--> E[Local Workspace]
+        D <--> F[File Tools]
+        D <--> G[Code Analysis]
+    end
 
-- **Bidirectional Sampling**: Implements the `sampling/createMessage` pattern for human-in-the-loop tool execution.
-- **Secure File Operations**: Scoped workspace access with root-level security checks.
-- **Dynamic Tool Discovery**: Automatically lists and invokes tools exposed by the MCP server.
-- **Modern UI/UX**: Cinematic Gradio interface for real-time interaction and monitoring.
+    B -- "JSON-RPC over HTTP" --> D
+```
 
-## 🛠️ Installation
+---
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/Mukkandi-Sridhar/mcp-orchestrator.git
-   cd mcp-orchestrator
-   ```
+## ✨ Key Features
 
-2. **Set up a virtual environment**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+### 📡 Remote MCP Protocol
+- **Streamable HTTP**: Bidirectional communication between host and server.
+- **Dynamic Discovery**: Automatic conversion of MCP tool schemas to OpenAI Function specifications.
+- **Resource Templates**: Type-safe resource access using URI templates (e.g., `file://workspace/{filename}`).
 
-3. **Install dependencies**:
-   ```bash
-   pip install -r mcp_advanced_lab/requirements.txt
-   ```
+### 🧠 Intelligent AI Host
+- **Recursive Tool Use**: The AI can autonomously chain multiple tool calls to solve complex problems.
+- **Protocol Helpers**: Synthetic tools that allow the AI to browse resources and list templates.
+- **Message-Based UI**: A modern, premium chat interface with full history and tool-call visualization.
 
-4. **Environment Variables**:
-   Create a `.env` file in the root and add your OpenAI API key:
-   ```env
-   OPENAI_API_KEY=your_api_key_here
-   ```
+### 🛡️ Enterprise-Grade Security
+- **Path Traversal Protection**: All file operations are strictly scoped to the `./workspace/` root.
+- **Absolute Path Resolution**: Prevents `../` style attacks via recursive path resolution.
 
-## 📖 Usage
+---
 
-### 1. Start the MCP Server
+## 🚀 Quick Start
+
+### 1. Prerequisites
+- Python 3.10 or higher
+- OpenAI API Key
+
+### 2. Installation
+```bash
+# Clone the repository
+git clone https://github.com/Mukkandi-Sridhar/mcp-orchestrator.git
+cd mcp-orchestrator
+
+# Setup environment
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r mcp_advanced_lab/requirements.txt
+```
+
+### 3. Configuration
+Create a `.env` file in the root directory:
+```env
+OPENAI_API_KEY=your_sk_...
+```
+
+### 4. Running the Ecosystem
+**Start the Server:**
 ```bash
 python mcp_advanced_lab/mcp_http_server.py
 ```
 
-### 2. Launch the AI Host / Client
+**Launch the Desktop Client (GUI):**
 ```bash
-python mcp_advanced_lab/mcp_http_host_app.py
+python mcp_advanced_lab/mcp_http_client_app.py http://127.0.0.1:8000 workspace
 ```
 
-## 💂️ Security
-
-This project implements **Path Traversal Protection**. All file operations are restricted to the `mcp_advanced_lab/workspace/` directory.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+**Launch the AI Host (Chat):**
+```bash
+python mcp_advanced_lab/mcp_http_host_app.py http://127.0.0.1:8000 workspace
+```
 
 ---
-Built with ❤️ for the MCP Community.
+
+## 🖼️ Gallery
+
+| Desktop Client (GUI) | AI Host (Chat) |
+| :---: | :---: |
+| ![Desktop Client Preview](mcp_advanced_lab/assets/gui_preview.png) | ![AI Host Preview](mcp_advanced_lab/assets/host_preview.png) |
+
+---
+
+## 🛠️ Components Detail
+
+| Component | Responsibility | Technology |
+| :--- | :--- | :--- |
+| **Server** | Resource exposure & tool execution | `FastMCP`, `Uvicorn` |
+| **Base Client** | Protocol logic & session management | `mcp`, `httpx` |
+| **Desktop App** | Human-in-the-loop tool discovery | `Gradio` |
+| **AI Host** | LLM orchestration & autonomous actions | `OpenAI`, `Gradio` |
+
+---
+
+## 🗺️ Roadmap
+- [ ] **Multi-Server Orchestration**: Connect a single host to multiple MCP servers simultaneously.
+- [ ] **Local LLM Support**: Integration with Ollama/Llama.cpp for fully private workflows.
+- [ ] **Auth Layer**: Add API Key / Bearer Token authentication to the HTTP server.
+
+---
+
+Built with ❤️ for the MCP Developer Community.
